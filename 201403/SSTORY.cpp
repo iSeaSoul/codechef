@@ -120,18 +120,26 @@ int main() {
 		}
 
 		sa.process (str, len1 + len2 + 1);
-		int ans = 0, mins;
+		int ans = 0, mins = maxn;
 		repf (i, 2, len1 + len2 + 1) {
 			if (belong(sa.sa[i], len1) != belong(sa.sa[i - 1], len1)) {
-				if (sa.height[i] > ans) {
-					ans = sa.height[i];
-					mins = (belong(sa.sa[i], len1) == 1? sa.sa[i] : sa.sa[i - 1]);
-				} else if (sa.height[i] == ans) {
-					ckmin (mins, belong(sa.sa[i], len1) == 1? sa.sa[i] : sa.sa[i - 1]);
-				}
+                ckmax (ans, sa.height[i]);
 			}
 		}
 		if (ans != 0) {
+            repf (i, 2, len1 + len2 + 1) {
+                if (belong(sa.sa[i], len1) != belong(sa.sa[i - 1], len1) && sa.height[i] == ans) {
+                    if (belong(sa.sa[i], len1) == 1) {
+                        for (int j = i; j <= len1 + len2 + 1 && sa.height[j] >= ans && belong(sa.sa[j], len1) == 1; ++j) {
+                            ckmin (mins, sa.sa[j]);
+                        }
+                    } else {
+                        for (int j = i - 1; j >= 1 && sa.height[j + 1] >= ans && belong(sa.sa[j], len1) == 1; --j) {
+                            ckmin (mins, sa.sa[j]);
+                        }
+                    }
+                }
+            }
 			rep (i, ans) putchar ('a' + str[mins + i] - 2);
 			puts ("");
 		}
