@@ -1,5 +1,5 @@
 // Rain Dreamer MODEL
-// iSea @ 2014-08-03 00:32
+// iSea @ 2014-08-06 10:58
 // Comment - 
 
 #include <cmath>
@@ -17,6 +17,7 @@
 #include <map>
 #include <set>
 #include <numeric>
+#include <cassert>
 
 using namespace std;
 
@@ -73,32 +74,45 @@ double rand_double() {
 	return (double)rand() / RAND_MAX;
 }
 
-std::vector<pii> cur;
+int64 base_sc, best_sc;
+vector<pii> ans;
 
-void try_random_swap(int rs_tm) {
-	if (!TN.valid()) {
-		return;
+void update_sc(int64 csc, vector<pii> res) {
+	// printf ("update_sc %I64d %I64d\n", best_sc, csc);
+	if (csc < best_sc) {
+		best_sc = csc;
+		ans = res;
 	}
+}
 
-	cur.clear();
+void solve_greedy() {
 	memcpy (b, a, sizeof(int) * n);
 	int clen = 0;
-
-	rep (i, rs_tm) {
+	vector<pii> res;
+	rep (i, n / 2) {
+		int tlen = (i + 1) * 2;
+		if (clen + tlen > 2 * n) {
+			break;
+		}
 		if (!TN.valid()) {
-			return ;
+			break;
 		}
-		int l = rand() % n, r = rand() % n;
-		if (l > r) swap(l, r);
-		if (l == r) continue;
-		if (r - l + 1 > n) continue;
-		if (clen + r - l + 1 > 2 * n) {
-			return ;
+		memcpy (c, b, sizeof(int) * n);
+		do_swap(c, n / 2 - i - 1, n / 2 + i);
+		int64 s1 = get_s(b), s2 = get_s(c);
+		if (s1 > s2) {
+			memcpy (b, c, sizeof(int) * n);
+			res.push_back(pii(n / 2 - i, n / 2 + 1 + i));
+			clen += tlen;
 		}
-		do_swap(b, l, r);
-		clen += r - l + 1;
-		cur.push_back(pii(l + 1, r + 1));
 	}
+	update_sc(get_s(b), res);
+}
+
+void solve_random() {
+	memcpy (b, a, sizeof(int) * n);
+	int clen = 0;
+	vector<pii> res;
 	rep (i, n / 2) {
 		int tlen = (i + 1) * 2;
 		if (clen + tlen > 2 * n) {
@@ -112,14 +126,20 @@ void try_random_swap(int rs_tm) {
 		int64 s1 = get_s(b), s2 = get_s(c);
 		if (s1 > s2 || rand_double() < exp(-(s2 - s1) / (n - (i << 1) + n))) {
 			memcpy (b, c, sizeof(int) * n);
-			cur.push_back(pii(n / 2 - i, n / 2 + 1 + i));
+			res.push_back(pii(n / 2 - i, n / 2 + 1 + i));
 			clen += tlen;
 		}
 	}
+	update_sc(get_s(b), res);
+}
+
+void solve_worst() {
+
 }
 
 int main() {
-	srand (19890410);
+	freopen ("SEASHUF.in", "r", stdin);
+	srand (20091120);
 
 	TN.init();
 
@@ -128,79 +148,21 @@ int main() {
 		scanf ("%d", &a[i]);
 	}
 
-	vector<pii> ans;
-	int oris = get_s(a);
+	best_sc = base_sc = get_s(a);
 
-	memcpy (b, a, sizeof(int) * n);
-	int64 mins;
-	int clen = 0;
-	rep (i, n / 2) {
-		int tlen = (i + 1) * 2;
-		if (clen + tlen > 2 * n) {
-			break;
-		}
-		if (!TN.valid()) {
-			break;
-		}
-		memcpy (c, b, sizeof(int) * n);
-		do_swap(c, n / 2 - i - 1, n / 2 + i);
-		int64 s1 = get_s(b), s2 = get_s(c);
-		if (s1 > s2 || rand_double() < exp(-(s2 - s1) / (n - (i << 1) + n))) {
-			memcpy (b, c, sizeof(int) * n);
-			ans.push_back(pii(n / 2 - i, n / 2 + 1 + i));
-			clen += tlen;
-		}
-	}
-	mins = get_s(b);
+	solve_greedy();
+	solve_random();
 
-	rep (i, 33) {
-		try_random_swap(i * 3 + 1);
-		int64 cs = get_s(b);
-		if (cs < mins) {
-			mins = cs;
-			ans = cur;
-		}
+	while (ans.empty()) {
+		solve_random();
 	}
 
-	if (mins > oris) {
-		ans.clear();
-		int64 left = accumulate(a, a + n / 2, 0LL), right = accumulate(a + n / 2, a + n, 0LL);
-		if (left > right) {
-			repf (i, n / 2, n - 1) {
-				if (a[n / 2 - 1] > a[i]) {
-					ans.push_back(pii(n / 2, i + 1));
-					break;
-				}
-			}
-			if (ans.empty()) {
-				rep (i, n / 2) {
-					if (a[n / 2] < a[i]) {
-						ans.push_back(pii(i + 1, n / 2 + 1));
-						break;
-					}
-				}
-			}
-		} else {
-			repf (i, n / 2, n - 1) {
-				if (a[n / 2 - 1] < a[i]) {
-					ans.push_back(pii(n / 2, i + 1));
-					break;
-				}
-			}
-			if (ans.empty()) {
-				rep (i, n / 2) {
-					if (a[n / 2] > a[i]) {
-						ans.push_back(pii(i + 1, n / 2 + 1));
-						break;
-					}
-				}
-			}
-		}
-	}
+	assert (best_sc < base_sc);
 
 	printf ("%d\n", sz(ans));
 	rep (i, sz(ans)) {
 		printf ("%d %d\n", ans[i].first, ans[i].second);
 	}
+
 	return 0;
 }
