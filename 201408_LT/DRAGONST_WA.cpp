@@ -90,7 +90,8 @@ void add_edge(int u, int v) {
  * The right method should be:
  * Process the point i by the order of xi + yi;
  * Find the closest xj - yj > xi - yi in which xj + yj > xi + yi;
- * And the edge
+ * Add the edge (i, j)
+ * And the number of edge should be O(4 * n)
  */
 void build_Manhattan_MST() {
 	XY1.clear(); XY2.clear(); e.clear();
