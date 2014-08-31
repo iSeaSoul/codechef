@@ -74,7 +74,7 @@ int main() {
 			rep (i, n) {
 				ret += (int64)d[c[i]] * H;
 			}
-			cout << ret / 2 << '.' << (ret & 1 == 0? '0' : ' 5')  << endl;
+			cout << ret / 2 << '.' << (ret & 1 == 0? '0' : '5')  << endl;
 			continue ;
 		}
 		int R = (n - step[ind]) / loop_len;
@@ -87,7 +87,7 @@ int main() {
 		repf (i, 0, step[ind] + left - 1) {
 			ret += (int64)d[c[i]] * H;
 		}
-		cout << ret / 2 << '.' << (ret & 1 == 0? '0' : ' 5') << endl;
+		cout << ret / 2 << '.' << (ret & 1 == 0? '0' : '5') << endl;
 	}
 	return 0;
 }
