@@ -42,9 +42,8 @@ template<class T> inline void ckmax(T &a, const T b) { if (b > a) a = b; }
 
 const int MAXM = 524288 + 10;
 
-int step[MAXM * 2];
+int step[MAXM << 1], c[MAXM << 1];
 int H, n, m, a, b, ind, d[MAXM];
-int c[MAXM * 2];
 
 int main() {
 	repcase {
@@ -70,40 +69,12 @@ int main() {
 				step[ind] = st;
 			}
 		}
-		if (n <= 524288) {
-			// use_double();
-			if (n < step[ind]) {
-				double ret = 0;
-				rep (i, n) {
-					ret += (double)d[c[i]] * H;
-				}
-				printf ("%.1lf\n", ret / 2);
-				continue ;
-			}
-			int R = (n - step[ind]) / loop_len;
-			int left = (n - step[ind]) % loop_len;
-			double ret = 0;
-			repf (i, step[ind], step[ind] + loop_len - 1) {
-				ret += (double)d[c[i]] * H;
-			}
-			ret *= R;
-			repf (i, 0, step[ind] + left - 1) {
-				ret += (double)d[c[i]] * H;
-			}
-			printf ("%.1lf\n", ret / 2);
-			continue;
-		}
 		if (n < step[ind]) {
 			int64 ret = 0;
 			rep (i, n) {
 				ret += (int64)d[c[i]] * H;
 			}
-			cout << ret / 2 << '.' << (ret & 1) << endl;
-			// double ret = 0;
-			// rep (i, n) {
-			// 	ret += (double)d[c[i]] * H;
-			// }
-			// printf ("%.1lf\n", ret / 2);
+			cout << ret / 2 << '.' << (ret & 1 == 0? '0' : ' 5')  << endl;
 			continue ;
 		}
 		int R = (n - step[ind]) / loop_len;
@@ -116,8 +87,7 @@ int main() {
 		repf (i, 0, step[ind] + left - 1) {
 			ret += (int64)d[c[i]] * H;
 		}
-		// printf ("%.1lf\n", ret / 2);
-		cout << ret / 2 << '.' << (ret & 1) << endl;
+		cout << ret / 2 << '.' << (ret & 1 == 0? '0' : ' 5') << endl;
 	}
 	return 0;
 }
