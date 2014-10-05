@@ -16,9 +16,11 @@ Simple Combinatorics. For any gap of adjacent different bucket, if the length is
 
 #### Magical Girl and Colored Liquid Potions (**PRPOTION**)
 
-Greedy. Only the maximum number in a colored set matters. And one greedy though is just applying magic trick on the maximum number.
+Greedy. Only the maximum number in a colored set matters. And one greedy thought is just applying magic trick on the maximum number.
 
 Though I didn't prove the correctness of greedy, it did Accepted.
+
+**Update**: the description was updated, no more increasing effect. I guess the previous solution must be wrong.
 
 #### Chef and Square (**CHEFSQUA**)
 

@@ -7,7 +7,7 @@ for Case in xrange(input()):
 	B = max(read())
 
 	max3 = lambda x, y, z: max(max(x, y), z)
-	oneMove = lambda x, y, z: (x / 2, y + 1, z + 1)
+	oneMove = lambda x, y, z: (x / 2, y, z)
 	ret = max3(R, G, B)
 
 	for tryTm in xrange(M):
